@@ -1,109 +1,31 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "whoami-webserver values",
   "type": "object",
   "properties": {
     "ingress": {
       "type": "object",
-      "description": "Configuration de l'ingress.",
+      "description": "Exposition HTTP (hostname injecte par Onyxia).",
       "properties": {
         "enabled": {
           "type": "boolean",
           "default": true,
+          "x-onyxia": { "hidden": true, "overwriteDefaultWith": "k8s.ingress" }
+        },
+        "hostname": {
+          "type": "string",
+          "default": "",
           "x-onyxia": {
-            "readonly": true
+            "hidden": true,
+            "overwriteDefaultWith": "{{project.id}}-{{k8s.randomSubdomain}}-0.{{k8s.domain}}"
           }
         },
-        "className": {
+        "ingressClassName": {
           "type": "string",
           "default": "traefik",
-          "x-onyxia": {
-            "readonly": true
-          }
-        },
-        "annotations": {
-          "type": "object",
-          "default": {},
-          "additionalProperties": { "type": "string" }
-        },
-        "hosts": {
-          "type": "array",
-          "default": [{
-            "host": "toto.localhost",
-            "paths": [{
-              "path": "/",
-              "pathType": "Prefix"
-            }]
-          }],
-          "x-onyxia": {
-            "readonly": true
-          },
-          "items": {
-            "type": "object",
-            "properties": {
-              "host": {
-                "type": "string",
-                "default": "pipo.localhost",
-                "x-onyxia": {
-                  "hidden": true
-                }
-              },
-              "paths": {
-                "type": "array",
-                "default": [],
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "path": {
-                      "type": "string",
-                      "default": "/",
-                      "x-onyxia": {
-                        "hidden": true
-                      }
-                    },
-                    "pathType": {
-                      "type": "string",
-                      "default": "Prefix",
-                      "x-onyxia": {
-                        "hidden": true
-                      }
-                    }
-                  },
-                  "required": ["path", "pathType"],
-                  "additionalProperties": false
-                }
-              }
-            },
-            "required": ["host", "paths"],
-            "additionalProperties": false
-          }
-        },
-        "tls": {
-          "type": "array",
-          "default": [],
-          "items": {
-            "type": "object",
-            "properties": {
-              "secretName": {
-                "type": "string",
-                "default": ""
-              },
-              "hosts": {
-                "type": "array",
-                "default": [],
-                "items": {
-                  "type": "string",
-                  "default": ""
-                }
-              }
-            },
-            "additionalProperties": false
-          }
+          "x-onyxia": { "hidden": true, "overwriteDefaultWith": "{{k8s.ingressClassName}}" }
         }
-      },
-      "required": ["enabled", "className", "annotations", "hosts", "tls"],
-      "additionalProperties": false
+      }
     }
-  },
-  "additionalProperties": true
+  }
 }
