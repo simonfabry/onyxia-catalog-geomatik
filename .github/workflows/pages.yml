@@ -1,0 +1,55 @@
+name: Publish Helm catalog
+
+on:
+  push:
+    branches: [master]   # passe à main si ta branche s'appelle ainsi
+  workflow_dispatch:
+
+env:
+  CHARTS_DIR: charts
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+
+      - name: Package charts
+        run: |
+          mkdir -p public
+          for chart in ${CHARTS_DIR}/*/; do
+            echo "Packaging $(basename "$chart")..."
+            helm package "$chart" --destination ./public/
+          done
+
+      - name: Generate index
+        run: |
+          helm repo index ./public/ \
+            --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
