@@ -2,7 +2,7 @@ name: Publish Helm catalog
 
 on:
   push:
-    branches: [master]   # passe à main si ta branche s'appelle ainsi
+    branches: [main, dev]
   workflow_dispatch:
 
 env:
