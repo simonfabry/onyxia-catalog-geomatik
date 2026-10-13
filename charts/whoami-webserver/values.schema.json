@@ -43,7 +43,7 @@
             "properties": {
               "host": {
                 "type": "string",
-                "default": "toto.localhost",
+                "default": "pipo.localhost",
                 "x-onyxia": {
                   "hidden": true
                 }
