@@ -10,7 +10,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
+  {{- with .Values.ingress.ingressClassName }}
   ingressClassName: {{ . }}
   {{- end }}
   {{- if .Values.ingress.tls }}
@@ -24,8 +24,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ .hostname | quote }}
       http:
         paths:
           {{- range .paths }}
@@ -39,5 +38,4 @@ spec:
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
-    {{- end }}
 {{- end }}
